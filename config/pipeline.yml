@@ -1,0 +1,54 @@
+---
+env:
+  path:
+    root: "exp"
+    name: "adni"
+    client: "/home/mmorelan/proj/brain/dementia/yml/orig/client-3d-raw.yml"
+model:
+  model: ["ae"]
+  conv_type: ["conv"]
+  pool_type: ["conv"]
+  eblock: ["conv"]
+  elayer: [1]
+  dblock: ["conv"]
+  depth: [6]
+  width: [4]
+  width_scaling: [1.5]
+  kernel_size: [[3, 3, 3]]
+  strides: [[2, 2, 2]]
+  bneck: [2]
+  branches: [4]
+  atrous_rate: [6]
+  order: ["rnc"]
+  norm: ["bnorm"]
+  activ: ["leaky"]
+  attn_msk: ["softmax"]
+  embed: [32]
+  log_loss: [True]
+  gamma: [2]
+  loss_weights: 
+    [
+      {"ctr": 1, "euc": 0, "ned": 0, "cls_anc": 1, "cls_unk": 1},
+      {"ctr": 0, "euc": 0, "ned": 0, "cls_anc": 1, "cls_unk": 1},
+    ]
+train:
+  xs:
+    dat:
+  ys:
+    lbl:
+      head: ["encoder_classifier"]
+      n_classes: [1]
+      loss: ["sce"]
+      metric: ["dice"]
+  trainer:
+    seed: [0]
+    n_folds: [1]
+    batch_size: [3]
+    iters: [4000]
+    steps: [100]
+    valid_freq: [1]
+    lr: [0.0001]
+    lr_alpha: [0.25] # range [0, 1]
+    lr_decay: [0.97] # range (0, 1]
+    contrastive_scale: [5]
+    callbacks: [["checkpoint", "lr_scheduler", "tensorboard", "hparams"]]
